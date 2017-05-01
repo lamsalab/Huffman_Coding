@@ -32,7 +32,14 @@ public class Grin {
 		BitInputStream in = new BitInputStream(infile);
 		BitOutputStream out = new BitOutputStream(outfile);
 		HuffmanTree tree = new HuffmanTree(frequencyMap);
+		Map<Short, Short> HuffmanCodes = createHuffmanCodes(tree);
 		
+	}
+	
+	public static Map<Short, Short> createHuffmanCodes(HuffmanTree tree) {
+		Map<Short, Short> HuffmanCodes = new HashMap<>();
+		//Do something
+		return HuffmanCodes;
 	}
 	
 	public static Map<Short, Integer> createFrequencyMap(String file) throws IOException {

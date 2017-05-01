@@ -7,7 +7,7 @@ public class HuffmanTree {
 	
 	private Node root;
 	
-	private class Node {
+	private class Node implements Comparable<Node> {
 		private short leafChar;
 		private int frequency;
 		private Node leftNode;
@@ -19,7 +19,19 @@ public class HuffmanTree {
 			leafChar = -1;
 		}
 		
+		public Node(Node left, Node right, int frequency) {
+			leftNode = left;
+			rightNode = right;
+			leafChar = -1;
+			this.frequency = frequency;
+		}
+		
 		public Node(short leafChar, int frequency) {
+			this.leafChar = leafChar;
+			this.frequency = frequency;
+		}
+		
+		public Node(short leafChar) {
 			this.leafChar = leafChar;
 		}
 		
@@ -42,21 +54,39 @@ public class HuffmanTree {
 		public short getBits() {
 			return leafChar;
 		}
+		
+		public int getFrequency() {
+			return frequency;
+		}
+
+		@Override
+		public int compareTo(Node o) {
+			if(this.frequency > o.frequency) {
+				return 1;
+			} else if(this.frequency < o.frequency) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
 	}
 
 	public HuffmanTree(Map<Short, Integer> m) {
 		PriorityQueue<Node> queue = new PriorityQueue<>();
 		Iterator<Entry<Short, Integer>> it = m.entrySet().iterator();
-		while(it.hasNext()) {
-			Map.Entry<Short, Integer> pair = (Map.Entry)it.next();
-			queue.add(new Node((short) pair.getKey(), (int) pair.getValue()));
+		while (it.hasNext()) {
+			Map.Entry<Short, Integer> pair = (Map.Entry<Short, Integer>)it.next();
+	        queue.add(new Node(pair.getKey(), pair.getValue()));
+	        it.remove();
+	    }
+		while(queue.size() >= 2) {
+			Node first = queue.poll();
+			Node second = queue.poll();
+			queue.add(new Node(first, second, first.getFrequency() + second.getFrequency()));
 		}
-		System.out.println(queue.toString());
+		root = queue.poll();
 	}
 	
-	//private Node HuffmanTreeBuilderFromMap() {
-	//	
-	//}
 	
 	public HuffmanTree(BitInputStream in) {
 		root = HuffmanTreeBuilderFromFile(in);
