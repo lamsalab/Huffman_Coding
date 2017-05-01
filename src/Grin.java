@@ -29,18 +29,30 @@ public class Grin {
 	
 	public static void encode(String infile, String outfile) throws IOException {
 		Map<Short, Integer> frequencyMap = createFrequencyMap(infile);
+		System.out.println(frequencyMap.toString());
 		BitInputStream in = new BitInputStream(infile);
 		BitOutputStream out = new BitOutputStream(outfile);
 		HuffmanTree tree = new HuffmanTree(frequencyMap);
-		Map<Short, Short> HuffmanCodes = createHuffmanCodes(tree);
-		
+		Map<Short, String> HuffmanCodes = HuffmanTree.createHuffmanCodes(tree);
+		out.writeBits(1846, 32);
+		tree.serialize(out);
+		while(in.hasBits()) {
+			Short curChar = (short) in.readBits(8);
+			String code = HuffmanCodes.get(curChar);
+			if(!code.equals("100000000")) {
+				for(char c : code.toCharArray()) {
+					out.writeBit(Character.getNumericValue(c));
+				}
+			}
+		}
+		out.close();
+		in.close();
 	}
 	
-	public static Map<Short, Short> createHuffmanCodes(HuffmanTree tree) {
-		Map<Short, Short> HuffmanCodes = new HashMap<>();
-		//Do something
-		return HuffmanCodes;
-	}
+	
+	
+
+	
 	
 	public static Map<Short, Integer> createFrequencyMap(String file) throws IOException {
 		BitInputStream in = new BitInputStream(file);

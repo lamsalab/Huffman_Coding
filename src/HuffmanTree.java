@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -90,7 +91,6 @@ public class HuffmanTree {
 	
 	public HuffmanTree(BitInputStream in) {
 		root = HuffmanTreeBuilderFromFile(in);
-		root.preOrderPrint();
 	}
 	
 	private Node HuffmanTreeBuilderFromFile(BitInputStream in) {
@@ -105,7 +105,18 @@ public class HuffmanTree {
 	}
 	
 	public void serialize(BitOutputStream out) {
-		
+		serializeHelper(out, root);
+	}
+	
+	public void serializeHelper(BitOutputStream out, Node cur) {
+		if(cur.isLeaf()) {
+			out.writeBit(0);
+			out.writeBits(cur.getBits(), 9);
+		} else {
+			out.writeBit(1);
+			serializeHelper(out, cur.leftNode);
+			serializeHelper(out, cur.rightNode);
+		}
 	}
 	
 	public void encode(BitInputStream in, BitOutputStream out) {
@@ -131,5 +142,25 @@ public class HuffmanTree {
 		}
 		
 	}
+	
+	
+	public static Map<Short, String> createHuffmanCodes(HuffmanTree tree) {
+		return createHCHelper(tree.root, new HashMap<Short, String>(), "");
+	}
+	
+	
+	public static Map<Short, String> createHCHelper(Node root, HashMap<Short, String> m, String code) {
+		Node cur = root;
+		if(!cur.isLeaf()) {
+			createHCHelper(cur.leftNode, m, code + "0");
+			createHCHelper(cur.rightNode, m, code + "1");
+		} else {
+			m.put(cur.getBits(), code);
+		}
+		return m;
+	}
+	
+	
+	
 
 }
