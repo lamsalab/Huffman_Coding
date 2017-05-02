@@ -119,8 +119,18 @@ public class HuffmanTree {
 		}
 	}
 	
-	public void encode(BitInputStream in, BitOutputStream out) {
-		
+	public void encode(BitInputStream in, BitOutputStream out, Map<Short, String> HuffmanCodes) {
+		while (in.hasBits()) {
+			Short curChar = (short) in.readBits(8);
+			String code = HuffmanCodes.get(curChar);
+			for (char c : code.toCharArray()) {
+				out.writeBit(Character.getNumericValue(c));
+			}
+		}
+		String eof = HuffmanCodes.get((short) 256);
+		for (char c : eof.toCharArray()) {
+			out.writeBit(Character.getNumericValue(c));
+		}
 	}
 	
 	public void decode(BitInputStream in, BitOutputStream out) {
@@ -128,19 +138,21 @@ public class HuffmanTree {
 		Node cur = root;
 		while(temp != -1) {
 			while(!cur.isLeaf()) {
-				if(temp == 1) {
+				if (temp == 1) {
 					cur = cur.rightNode;
 				} else {
 					cur = cur.leftNode;
 				}
 				temp = in.readBit();
 			}
-			if(cur.getBits() != 256) {
+			if(cur.getBits() != 256)
+			{
 				out.writeBits(cur.getBits(), 8);
+			} else {
+				temp = -1;
 			}
 			cur = root;
 		}
-		
 	}
 	
 	

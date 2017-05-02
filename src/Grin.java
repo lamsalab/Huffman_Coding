@@ -18,7 +18,7 @@ public class Grin {
 	public static void decode(String infile, String outfile) throws IOException {
 		BitInputStream in = new BitInputStream(infile);
 		BitOutputStream out = new BitOutputStream(outfile);
-		if(in.readBits(32) != 1846) {
+		if (in.readBits(32) != 1846) {
 			throw new IllegalArgumentException();
 		}
 		HuffmanTree tree = new HuffmanTree(in);
@@ -26,29 +26,19 @@ public class Grin {
 		in.close();
 		out.close();
 	}
-	
+
 	public static void encode(String infile, String outfile) throws IOException {
 		Map<Short, Integer> frequencyMap = createFrequencyMap(infile);
-		System.out.println(frequencyMap.toString());
 		BitInputStream in = new BitInputStream(infile);
 		BitOutputStream out = new BitOutputStream(outfile);
 		HuffmanTree tree = new HuffmanTree(frequencyMap);
 		Map<Short, String> HuffmanCodes = HuffmanTree.createHuffmanCodes(tree);
 		out.writeBits(1846, 32);
 		tree.serialize(out);
-		while(in.hasBits()) {
-			Short curChar = (short) in.readBits(8);
-			String code = HuffmanCodes.get(curChar);
-			if(!code.equals("100000000")) {
-				for(char c : code.toCharArray()) {
-					out.writeBit(Character.getNumericValue(c));
-				}
-			}
-		}
+		tree.encode(in, out, HuffmanCodes);
 		out.close();
 		in.close();
 	}
-	
 	
 	
 
