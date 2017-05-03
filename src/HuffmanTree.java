@@ -36,18 +36,6 @@ public class HuffmanTree {
 			this.leafChar = leafChar;
 		}
 		
-		public void preOrderPrint() {
-			if(leafChar != -1) {
-				System.out.println((char) leafChar);
-			}
-			if(leftNode != null) {
-				leftNode.preOrderPrint();
-			}
-			if(rightNode != null) {
-				rightNode.preOrderPrint();
-			}
-		}
-		
 		public boolean isLeaf() {
 			return leafChar != -1;
 		}
@@ -71,7 +59,10 @@ public class HuffmanTree {
 			}
 		}
 	}
-
+	/**
+	 * Builds a new Huffman Tree from a character frequency map
+	 * @param m Map that contains character shorts as keys and their frequencies as values
+	 */
 	public HuffmanTree(Map<Short, Integer> m) {
 		PriorityQueue<Node> queue = new PriorityQueue<>();
 		Iterator<Entry<Short, Integer>> it = m.entrySet().iterator();
@@ -88,11 +79,19 @@ public class HuffmanTree {
 		root = queue.poll();
 	}
 	
-	
+	/**
+	 * Builds a new Huffman Tree and initializes the root
+	 * @param in BitInputStream of the encoded file
+	 */
 	public HuffmanTree(BitInputStream in) {
 		root = HuffmanTreeBuilderFromFile(in);
 	}
 	
+	/**
+	 * Recursively builds a Huffman tree via preorder traversal over the serialized tree
+	 * @param in BitInputStream of the encoded file
+	 * @return A new node containing everything below it in the Huffman tree
+	 */
 	private Node HuffmanTreeBuilderFromFile(BitInputStream in) {
 		int temp = in.readBit();
 		if(temp == 1) {
@@ -133,6 +132,11 @@ public class HuffmanTree {
 		}
 	}
 	
+	/**
+	 * Decodes the input stream and writes the decoded characters to the output stream
+	 * @param in BitInputStream for the encoded file
+	 * @param out BitInputStream for the file being decoded
+	 */
 	public void decode(BitInputStream in, BitOutputStream out) {
 		int temp = in.readBit();
 		Node cur = root;
