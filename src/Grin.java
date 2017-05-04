@@ -15,6 +15,12 @@ public class Grin {
 
 	}
 
+	/**
+	 * Decodes a file via Huffman Coding
+	 * @param infile the file being decoded
+	 * @param outfile the new, uncompressed file
+	 * @throws IOException
+	 */
 	public static void decode(String infile, String outfile) throws IOException {
 		BitInputStream in = new BitInputStream(infile);
 		BitOutputStream out = new BitOutputStream(outfile);
@@ -27,6 +33,12 @@ public class Grin {
 		out.close();
 	}
 
+	/**
+	 * Compresses a file via Huffman Coding
+	 * @param infile the file being encoded
+	 * @param outfile the new, compressed file
+	 * @throws IOException
+	 */
 	public static void encode(String infile, String outfile) throws IOException {
 		Map<Short, Integer> frequencyMap = createFrequencyMap(infile);
 		BitInputStream in = new BitInputStream(infile);
@@ -39,11 +51,14 @@ public class Grin {
 		out.close();
 		in.close();
 	}
-	
-	
 
 	
-	
+	/**
+	 * Creates a map of characters to their frequency in a file
+	 * @param file the file being parsed
+	 * @return Map of characters to their frequency in a file
+	 * @throws IOException
+	 */
 	public static Map<Short, Integer> createFrequencyMap(String file) throws IOException {
 		BitInputStream in = new BitInputStream(file);
 		short temp = (short) in.readBits(8);
